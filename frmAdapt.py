@@ -137,8 +137,20 @@ class AdaptDlg(QDialog):
         # self.connect(savebtn, SIGNAL('clicked()'), self.saveAdapt)
 
         self.dispTotalnums()
+
+        # self.AdaptView.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.AdaptView.doubleClicked.connect(self.dbclick)
         # self.createDb()
         # self.AdaptView.show()
+
+    def dbclick(self, indx):
+        #当已经申核完结时，锁定当前item，禁止编辑，主要通过全局的 setEditTriggers 来设置。
+        # print(indx, indx.parent())
+        # print(indx.sibling(indx.row(),4).data())
+        if indx.sibling(indx.row(),4).data() == "是":
+            self.AdaptView.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        else:
+            self.AdaptView.setEditTriggers(QAbstractItemView.DoubleClicked)
 
     def yearCheck(self):
         if self.yearCheckbox.isChecked():
@@ -206,6 +218,7 @@ class AdaptDlg(QDialog):
         self.infoLabel.setText("")
 
     def newAdapt(self):
+        # self.AdaptModel.setFilter("1=1")
         row = self.AdaptModel.rowCount()
         self.AdaptModel.insertRow(row)
         self.AdaptModel.setData(self.AdaptModel.index(row, 4), "否") #set default password
@@ -213,7 +226,6 @@ class AdaptDlg(QDialog):
         # self.AdaptModel.setData(self.AdaptModel.index(row, 2), "123456") #set default password
 
     def saveAdapt(self):
-        # self.AdaptModel.setFilter("")
         self.AdaptModel.database().transaction()
         if self.AdaptModel.submitAll():
             self.AdaptModel.database().commit()
@@ -223,6 +235,7 @@ class AdaptDlg(QDialog):
             self.AdaptModel.database().rollback()
             # print("save fail!  ->rollback")
 
+        self.AdaptModel.setFilter("1=1")
         self.infoLabel.setText("")
         # model->database().transaction();
         # tmpitem = QStandardItem("张三")

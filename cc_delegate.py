@@ -5,13 +5,15 @@ class DateDelegate(QItemDelegate):
         QItemDelegate.__init__(self, parent)
         # itemslist = ["a", "b", "c"]
         self.parent = parent
-        
+
     def createEditor(self,parent,option,index):
         editor = QDateTimeEdit(parent)
         # curdate = datetime.date.today()
         # curdate = QDate.fromString(curdate.isoformat(),  Qt.ISODate)
-        curdate = QDate.currentDate()
-        editor.setDate(curdate)
+
+        # curdate = QDate.currentDate()
+        # editor.setDate(curdate)
+
         # editor.setDisplayFormat("yyyy-MM")
         editor.setDisplayFormat("yyyy-MM-dd")
         editor.setCalendarPopup(True)
@@ -21,16 +23,23 @@ class DateDelegate(QItemDelegate):
     def setEditorData(self,editor,index):        
         # print('---', index.data(Qt.DisplayRole))
         dateStr = index.data(Qt.DisplayRole)
-        if type(dateStr) == QDate:
-            # print(2222)
-            date = ""
-        else:
-        # dateStr = index.model().data(index).toString()
-            # date = QDate.fromString(dateStr,  "yyyy-MM")
+        # date = QDate.currentDate()
+        # print(1, type(dateStr))
+        if type(dateStr) == type(str("abc")):
             date = QDate.fromString(dateStr,  Qt.ISODate)
-            edit = editor
+            # date = QDate.currentDate()
+            # print(2, date, dateStr)
+        elif type(dateStr) == QDate:
+            # print(3, dateStr)
+            if dateStr.isNull():
+                date = QDate.currentDate()
+                # print(4, date)
+            else:
+                date = index.model().data(index)
+                # print(5, date)
+        edit = editor
             # edit.setDisplayFormat("yyyy-MM")
-            edit.setDate(date)
+        edit.setDate(date)
    
     def setModelData(self,editor,model,index):
         date = editor.date()

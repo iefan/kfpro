@@ -33,7 +33,6 @@ class MainWindow(QMainWindow):
         
         self.setCentralWidget(self.tabWidget)
 
-
         self.createActions()
         self.createMenus()
 
@@ -82,19 +81,29 @@ class MainWindow(QMainWindow):
         menu.exec_(event.globalPos())
 
     def userManage(self):
-        print("count:", self.tabWidget.count())
-        tabindx = self.tabWidget.currentIndex()
-        if tabindx != -1:
-            print(self.tabWidget.tabText(tabindx))
+        curTabText = "用户管理"
+        for tabindx in list(range(0, self.tabWidget.count())):
+            if self.tabWidget.tabText(tabindx) == curTabText:
+                self.tabWidget.setCurrentIndex(tabindx)
+                return
 
-        print(self.tabWidget.currentIndex())
         widget = UserDlg(db=self.db)
-        self.tabWidget.addTab(widget,"用户管理")
+        self.tabWidget.addTab(widget,curTabText)
+        self.tabWidget.setCurrentWidget(widget)
+        # self.lstTab.append(tabindx)
         # self.infoLabel.setText("Invoked <b>File|New</b>")
 
     def ToolManage(self):
+        curTabText = "适配器管理"
+        for tabindx in list(range(0, self.tabWidget.count())):
+            if self.tabWidget.tabText(tabindx) == curTabText:
+                self.tabWidget.setCurrentIndex(tabindx)
+                return
+
         widget2 = AdaptDlg(db=self.db)
-        self.tabWidget.addTab(widget2,"适配器管理")
+        tabindx = self.tabWidget.addTab(widget2,curTabText)
+        self.tabWidget.setCurrentWidget(widget2)
+        # self.lstTab.append(tabindx)
         # self.infoLabel.setText("Invoked <b>File|Open</b>")
         	
     def about(self):
@@ -146,6 +155,7 @@ class MainWindow(QMainWindow):
 if __name__ == '__main__':
     import sys
     app = QApplication(sys.argv)
+    # app.setStyle(QStyleFactory.create('cleanlooks'))
     window = MainWindow()
     window.show()
     sys.exit(app.exec_())
