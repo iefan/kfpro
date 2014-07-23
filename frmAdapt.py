@@ -61,7 +61,7 @@ class AdaptDlg(QDialog):
         btnbox.addButton(revertbtn, QDialogButtonBox.ActionRole);
         btnbox.addButton(removebtn, QDialogButtonBox.ActionRole);
 
-        self.infoLabel = QLabel("合计：", alignment=Qt.AlignLeft)
+        self.infoLabel = QLabel("", alignment=Qt.AlignLeft)
         self.infoLabel.setFrameStyle(QFrame.StyledPanel | QFrame.Sunken)
 
         # bottomFiller = QWidget()
@@ -179,7 +179,9 @@ class AdaptDlg(QDialog):
         self.AdaptModel.setFilter(strwhere)
         self.AdaptModel.select()
 
-        self.dispTotalnums(strwhere)       
+        self.dispTotalnums(strwhere)
+
+        # self.AdaptModel.setFilter("")
 
     def removeAdapt(self):
         index = self.AdaptView.currentIndex()
@@ -204,13 +206,16 @@ class AdaptDlg(QDialog):
     def revertAdapt(self):
         self.AdaptModel.revertAll()
         self.AdaptModel.database().rollback()
+        self.infoLabel.setText("")
 
     def newAdapt(self):
         row = self.AdaptModel.rowCount()
         self.AdaptModel.insertRow(row)
+        self.infoLabel.setText("")
         # self.AdaptModel.setData(self.AdaptModel.index(row, 2), "123456") #set default password
 
     def saveAdapt(self):
+        self.AdaptModel.setFilter("")
         self.AdaptModel.database().transaction()
         if self.AdaptModel.submitAll():
             self.AdaptModel.database().commit()
