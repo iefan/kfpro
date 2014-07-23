@@ -33,11 +33,17 @@ class AdaptDlg(QDialog):
         # self.AdaptModel.setHorizontalHeaderLabels(headers)
         self.AdaptView.setModel(self.AdaptModel)
         self.AdaptView.setColumnHidden(0, True) # hide sn
-        self.AdaptView.setColumnHidden(4, True) # hide over
+        # self.AdaptView.setColumnHidden(4, True) # hide over
         # print(2)
-        dateDelegate = DateDelegate()
-        # print(3)
+        dateDelegate = DateDelegate(self)
+        yesnoDelegate = ComboBoxDelegate(self, ["是", "否"])
         self.AdaptView.setItemDelegateForColumn(1, dateDelegate)
+        # self.AdaptView.setItemDelegateForColumn(4, yesnodelegate)
+
+        self.AdaptView.setItemDelegateForColumn(4, yesnoDelegate)
+        # print(yesnodelegate)
+
+
         self.AdaptView.setStyleSheet("QTableView::item:hover {background-color: rgba(100,200,220,100);} ")
         # self.AdaptView.setSelectionBehavior(QAbstractItemView.SelectItems)
         self.AdaptView.setSelectionMode(QAbstractItemView.SingleSelection)
@@ -48,8 +54,7 @@ class AdaptDlg(QDialog):
         self.AdaptView.setStyleSheet("font-size:14px; ");
         # print(4)
        
-        self.AdaptView.setSizePolicy(QSizePolicy.Expanding,
-                QSizePolicy.Expanding)
+        self.AdaptView.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         btnbox = QDialogButtonBox(Qt.Horizontal)
         newusrbtn       = QPushButton("新增")
@@ -186,14 +191,7 @@ class AdaptDlg(QDialog):
     def removeAdapt(self):
         index = self.AdaptView.currentIndex()
         row = index.row()
-        # print(index.isValid(), index.row())
         nameid = self.AdaptModel.data(self.AdaptModel.index(row, 0))
-        # self.AdaptModel.setFilter("id = 10");
-        # self.AdaptModel.select();
-        # if self.AdaptModel.rowCount() == 1:
-        #     model.removeRows(0,1) // 如果要删除所有满足条件的记录则把1改成model.rowCount()
-        #     model.submitAll();
-
         self.AdaptModel.removeRows(row, 1)
         self.AdaptModel.submitAll()
         self.AdaptModel.database().commit()
@@ -202,7 +200,6 @@ class AdaptDlg(QDialog):
 
         # print("nameid")
         
-
     def revertAdapt(self):
         self.AdaptModel.revertAll()
         self.AdaptModel.database().rollback()
@@ -211,11 +208,12 @@ class AdaptDlg(QDialog):
     def newAdapt(self):
         row = self.AdaptModel.rowCount()
         self.AdaptModel.insertRow(row)
+        self.AdaptModel.setData(self.AdaptModel.index(row, 4), "否") #set default password
         self.infoLabel.setText("")
         # self.AdaptModel.setData(self.AdaptModel.index(row, 2), "123456") #set default password
 
     def saveAdapt(self):
-        self.AdaptModel.setFilter("")
+        # self.AdaptModel.setFilter("")
         self.AdaptModel.database().transaction()
         if self.AdaptModel.submitAll():
             self.AdaptModel.database().commit()

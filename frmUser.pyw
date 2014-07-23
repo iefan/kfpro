@@ -10,9 +10,12 @@ class UserDlg(QDialog):
 
         # self.setCentralWidget(widget)
 
-        self.db = db
+        if db == "":
+            self.db = globaldb()
+        else:
+            self.db = db
 
-        headers = ["单位编码", "单位名称", "单位类别", "姓名"]
+        # headers = ["单位编码", "单位名称", "单位类别", "姓名"]
 
         self.userView = QTableView()
         self.userModel = QSqlTableModel(self.userView)
@@ -34,8 +37,11 @@ class UserDlg(QDialog):
         self.userView.setColumnHidden(2, True) # hide password
         # print(2)
         combodelegate = ComboBoxDelegate(self, ["市残联", "金平区残联", "龙湖区残联", "濠江区残联"])
-        # print(3)
+        combodelegate2 = ComboBoxDelegate(self, ["市残联", "区残联", "辅具中心"])
         self.userView.setItemDelegateForColumn(3, combodelegate)
+        self.userView.setItemDelegateForColumn(4, combodelegate2)
+
+
         self.userView.setStyleSheet("QTableView::item:hover {background-color: rgba(100,200,220,100);} ")
         # self.userView.setSelectionBehavior(QAbstractItemView.SelectItems)
         self.userView.setSelectionMode(QAbstractItemView.SingleSelection)
@@ -72,10 +78,10 @@ class UserDlg(QDialog):
         btnbox.addButton(revertbtn, QDialogButtonBox.ActionRole);
         btnbox.addButton(removebtn, QDialogButtonBox.ActionRole);
 
-        self.infoLabel = QLabel(
-                "<i>Choose a menu option, or right-click to invoke a context menu</i>",
-                alignment=Qt.AlignCenter)
-        self.infoLabel.setFrameStyle(QFrame.StyledPanel | QFrame.Sunken)
+        # self.infoLabel = QLabel(
+        #         "<i>Choose a menu option, or right-click to invoke a context menu</i>",
+        #         alignment=Qt.AlignCenter)
+        # self.infoLabel.setFrameStyle(QFrame.StyledPanel | QFrame.Sunken)
 
         # bottomFiller = QWidget()
         # bottomFiller.setSizePolicy(QSizePolicy.Expanding,
@@ -85,7 +91,7 @@ class UserDlg(QDialog):
         vbox.setMargin(5)
         vbox.addWidget(self.userView)
         vbox.addWidget(btnbox)
-        vbox.addWidget(self.infoLabel)
+        # vbox.addWidget(self.infoLabel)
         self.setLayout(vbox)
 
         savebtn.clicked.connect(self.saveUser)

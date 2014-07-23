@@ -1,10 +1,11 @@
 from myimport import *
 
 class DateDelegate(QItemDelegate):
-    def __init__(self):
-        super(DateDelegate,self).__init__()
-        pass
-    
+    def __init__(self, parent):
+        QItemDelegate.__init__(self, parent)
+        # itemslist = ["a", "b", "c"]
+        self.parent = parent
+        
     def createEditor(self,parent,option,index):
         editor = QDateTimeEdit(parent)
         # curdate = datetime.date.today()
@@ -103,11 +104,11 @@ class ComboBoxDelegate(QItemDelegate):
         model.setData(index, text)
 
 
-    def updateEditorGeometry(self, editor, option, index):
-        self.editor.setGeometry(option.rect)
+    # def updateEditorGeometry(self, editor, option, index):
+    #     self.editor.setGeometry(option.rect)
 
-    def editorChanged(self, index):
-        check = self.editor.itemText(index)
-        id_seq = self.parent.selectedIndexes[0][0]
-        update.updateCheckSeq(self.parent.db, id_seq, check)
-        
+    # def editorChanged(self, index):
+    #     check = self.editor.itemText(index)
+    #     id_seq = self.parent.selectedIndexes[0][0]
+    #     update.updateCheckSeq(self.parent.db, id_seq, check)
+
