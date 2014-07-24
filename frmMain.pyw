@@ -4,9 +4,10 @@ from resources import *
 
 from frmUser import UserDlg
 from frmAdapt import AdaptDlg
+from frmPwd import frmPwd
 
 class MainWindow(QMainWindow):
-    def __init__(self, db=""):
+    def __init__(self, db="", curuser = {}):
         super(MainWindow, self).__init__()
         # print(1)
 
@@ -16,6 +17,8 @@ class MainWindow(QMainWindow):
             self.db = globaldb()
         else:
             self.db = db
+
+        self.curuser = curuser
 
         # self.db = globaldb()
         # self.createDb()
@@ -34,12 +37,23 @@ class MainWindow(QMainWindow):
         self.createActions()
         self.createMenus()
 
-        message = "A context menu is available by right-clicking"
+        message = "欢迎使用汕头市残联康复业务管理系统！"
         self.statusBar().showMessage(message)
 
+        if self.curuser == {}:
+            userInfoStr = "当前登录属于调试操作！"
+        else:
+            userInfoStr = "当前用户编码：%s，单位：%s，操作人员姓名：%s" % (self.curuser["unitsn"], self.curuser["unitname"], self.curuser["unitman"])
+        self.userlabel = QLabel(userInfoStr)
+        self.statusBar().addPermanentWidget(self.userlabel)
+
+        self.setWindowIcon(QIcon("images/login.png"))
         self.setWindowTitle("康复业务系统")
         self.setMinimumSize(480,320)
         self.resize(720,600)
+
+        self.setStyleSheet("font-size:14px;")
+        
         # self.createDb()
 
     def closeMyTab(self, tabindx):
@@ -78,7 +92,21 @@ class MainWindow(QMainWindow):
         menu.addAction(self.pasteAct)
         menu.exec_(event.globalPos())
 
+    # def refreshTable(self):
+    #     print("a")
+
+    def modifyPwd(self):
+        dialog=frmPwd(self, db=self.db, curuser=self.curuser)
+        # dialog.show()
+        # self.connect(dialog, SIGNAL("changed"), self.refreshTable)
+        dialog.show()
+
     def userManage(self):
+        if self.curuser != {}:
+            if self.curuser["unitclass"] != "市残联":
+                QMessageBox.warning(self, "没有授权", "当前用户没有权限进行该操作！")
+                return
+
         curTabText = "用户管理"
         for tabindx in list(range(0, self.tabWidget.count())):
             if self.tabWidget.tabText(tabindx) == curTabText:
@@ -92,13 +120,18 @@ class MainWindow(QMainWindow):
         # self.infoLabel.setText("Invoked <b>File|New</b>")
 
     def ToolManage(self):
+        if self.curuser != {}:
+            if self.curuser["unitclass"] != "市残联" and self.curuser["unitclass"] != "辅具中心":
+                QMessageBox.warning(self, "没有授权", "当前用户没有权限进行该操作！")
+                return
+
         curTabText = "适配器管理"
         for tabindx in list(range(0, self.tabWidget.count())):
             if self.tabWidget.tabText(tabindx) == curTabText:
                 self.tabWidget.setCurrentIndex(tabindx)
                 return
 
-        widget2 = AdaptDlg(db=self.db)
+        widget2 = AdaptDlg(db=self.db, curuser=self.curuser)
         tabindx = self.tabWidget.addTab(widget2,curTabText)
         self.tabWidget.setCurrentWidget(widget2)
         # self.lstTab.append(tabindx)
@@ -106,9 +139,8 @@ class MainWindow(QMainWindow):
         	
     def about(self):
         # self.infoLabel.setText("Invoked <b>Help|About</b>")
-        QMessageBox.about(self, "About Menu",
-                "The <b>Menu</b> example shows how to create menu-bar menus "
-                "and context menus.")
+        QMessageBox.about(self, "关于...",
+                "本程序完成康复科日常业务数据管理!")
 
     def aboutQt(self):
         pass
@@ -131,16 +163,18 @@ class MainWindow(QMainWindow):
         return action
 
     def createActions(self):
-        self.userAct    = self.createAction("用户管理(&M)", self.userManage,   "", "", "用户管理")
-        self.toolAct    = self.createAction("辅具用品(&M)", self.ToolManage,   "", "", "辅具用品数量统计")
-        self.exitAct    = self.createAction("E&xit", self.close,   "Ctrl+Q", "", "Exit the application")
-        self.aboutAct   = self.createAction("&About", self.about,   "", "", "Show the application's About box")
-        self.aboutQtAct = self.createAction("About &Qt", self.aboutQt,   "", "", "Show the Qt library's About box")
+        self.userAct        = self.createAction("用户管理(&M)", self.userManage,   "", "", "用户管理")
+        self.modifyPwdAct   = self.createAction("修改密码", self.modifyPwd,   "", "", "修改用户密码")
+        self.toolAct        = self.createAction("辅具用品(&M)", self.ToolManage,   "", "", "辅具用品数量统计")
+        self.exitAct        = self.createAction("退出(&X)", self.close,   "Ctrl+Q", "", "退出系统")
+        self.aboutAct       = self.createAction("关于(&A)", self.about,   "", "", "显示当前系统的基本信息")
+        self.aboutQtAct     = self.createAction("关于&Qt", self.aboutQt,   "", "", "显示Qt库的基本信息")
         self.aboutQtAct.triggered.connect(qApp.aboutQt)
         
     def createMenus(self):
         self.fileMenu = self.menuBar().addMenu("系统管理")
         self.fileMenu.addAction(self.userAct)        
+        self.fileMenu.addAction(self.modifyPwdAct)        
         self.fileMenu.addAction(self.exitAct)
 
         self.editMenu = self.menuBar().addMenu("业务管理")

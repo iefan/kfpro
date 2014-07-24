@@ -3,7 +3,7 @@ from resources import *
 from cc_delegate import ComboBoxDelegate, DateDelegate
 
 class AdaptDlg(QDialog):
-    def __init__(self,parent=None, db=""):
+    def __init__(self,parent=None, db="", curuser={}):
         super(AdaptDlg,self).__init__(parent)
 
         # widget = QWidget()               
@@ -13,6 +13,8 @@ class AdaptDlg(QDialog):
             self.db = globaldb()
         else:
             self.db = db
+
+        self.curuser = curuser
 
         # headers = ["月份", "适配人数", "适配件数", "是否确认"]
 
@@ -135,22 +137,22 @@ class AdaptDlg(QDialog):
         self.yearCheckbox.stateChanged.connect(self.yearCheck)
         # self.AdaptView.clicked.connect(self.tableClick)
         # self.connect(savebtn, SIGNAL('clicked()'), self.saveAdapt)
-
         self.dispTotalnums()
-
         # self.AdaptView.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.AdaptView.doubleClicked.connect(self.dbclick)
-        # self.createDb()
-        # self.AdaptView.show()
 
     def dbclick(self, indx):
         #当已经申核完结时，锁定当前item，禁止编辑，主要通过全局的 setEditTriggers 来设置。
-        # print(indx, indx.parent())
-        # print(indx.sibling(indx.row(),4).data())
-        if indx.sibling(indx.row(),4).data() == "是":
-            self.AdaptView.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        else:
-            self.AdaptView.setEditTriggers(QAbstractItemView.DoubleClicked)
+        if self.curuser != {}:
+            if self.curuser["unitclass"] == "辅具中心":
+                if indx.sibling(indx.row(),4).data() == "是":
+                    self.AdaptView.setEditTriggers(QAbstractItemView.NoEditTriggers)
+                else:
+                    self.AdaptView.setEditTriggers(QAbstractItemView.DoubleClicked)
+
+                if indx.column() == 4:
+                    self.AdaptView.setEditTriggers(QAbstractItemView.NoEditTriggers)
+
 
     def yearCheck(self):
         if self.yearCheckbox.isChecked():

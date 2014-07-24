@@ -12,15 +12,18 @@ class Login(QDialog):
         else:
             self.db = db
 
+        self.curuser = {}
+
         lbl1 = QLabel("用户名：")
         lbl2 = QLabel("密  码：")
 
         self.textName = QLineEdit()
         self.textPass = QLineEdit()
+        self.textPass.setEchoMode(QLineEdit.Password)
         self.buttonLogin = QPushButton('登录')
 
-        self.textName.setFixedWidth(100)
-        self.textPass.setFixedWidth(100)
+        self.textName.setFixedWidth(150)
+        self.textPass.setFixedWidth(150)
         self.buttonLogin.setFixedWidth(100)
         self.buttonLogin.clicked.connect(self.handleLogin)
 
@@ -29,7 +32,7 @@ class Login(QDialog):
         layout.addWidget(self.textName, 0, 1)
         layout.addWidget(lbl2, 1, 0, Qt.AlignRight)
         layout.addWidget(self.textPass, 1, 1)
-        layout.addWidget(self.buttonLogin, 2, 1)
+        layout.addWidget(self.buttonLogin, 2, 1, Qt.AlignRight)
 
         bitmaplbl = QLabel()
         bitmaplbl.setPixmap(QPixmap("images/login.png"))
@@ -43,9 +46,9 @@ class Login(QDialog):
         self.setWindowIcon(QIcon("images/login.png"))
         self.setStyleSheet("font-size:16px;")
 
-        self.setMinimumSize(320,180)
-        self.setMaximumSize (320,180)
-        self.resize(320,180)
+        self.setMinimumSize(380,180)
+        self.setMaximumSize (380,180)
+        self.resize(380,180)
 
     def handleLogin(self):
         username = self.textName.text()
@@ -57,13 +60,14 @@ class Login(QDialog):
         # print(ret, "~~~~~~~", strsql, query.next(), query.isValid())
         # print(ret, query.isValid(), query.next(),)
         if query.next():
-            curuser = {}
-            curuser['unitsn']      = query.value(0)
-            curuser['unitname']    = query.value(1)
-            curuser['unitclass']   = query.value(2)
-            curuser['unitman']     = query.value(3)
-            # print("user", curuser)
+            self.curuser['unitsn']      = query.value(0)
+            self.curuser['unitname']    = query.value(1)
+            self.curuser['unitclass']   = query.value(2)
+            self.curuser['unitman']     = query.value(3)
+            # print(1)
+            # print("user", self.curuser)
             self.accept()
+            # print(2)
         else:
             QMessageBox.warning(self, '错误', '请输入正确的用户名和密码')
 
@@ -73,8 +77,11 @@ def DispLogin():
 
     db = globaldb()
     loginwin = Login(db)
+    # print(loginwin.curuser)
     if loginwin.exec_() == QDialog.Accepted:
-        window = MainWindow(db)
+        # print(loginwin.curuser)
+        # print(3)
+        window = MainWindow(db, loginwin.curuser)
         window.show()
         sys.exit(app.exec_())
 

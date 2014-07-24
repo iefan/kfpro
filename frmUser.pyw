@@ -36,8 +36,8 @@ class UserDlg(QDialog):
         self.userView.setColumnHidden(0, True) # hide sn
         self.userView.setColumnHidden(2, True) # hide password
         # print(2)
-        combodelegate = ComboBoxDelegate(self, ["市残联", "金平区残联", "龙湖区残联", "濠江区残联"])
-        combodelegate2 = ComboBoxDelegate(self, ["市残联", "区残联", "辅具中心"])
+        combodelegate = ComboBoxDelegate(self, ["市残联", "辅助器具中心", "市康复中心"])
+        combodelegate2 = ComboBoxDelegate(self, ["市残联", "辅具中心", "康复中心"])
         self.userView.setItemDelegateForColumn(3, combodelegate)
         self.userView.setItemDelegateForColumn(4, combodelegate2)
 
@@ -68,15 +68,15 @@ class UserDlg(QDialog):
 
         btnbox = QDialogButtonBox(Qt.Horizontal)
         newusrbtn       = QPushButton("新增")
-        modifypwdbtn    = QPushButton("修改密码")
         savebtn         = QPushButton("保存")
         revertbtn       = QPushButton("撤销")
         removebtn       = QPushButton("删除")
+        resetPwdbtn    = QPushButton("重置密码")
         btnbox.addButton(newusrbtn, QDialogButtonBox.ActionRole);
-        btnbox.addButton(modifypwdbtn, QDialogButtonBox.ActionRole);
         btnbox.addButton(savebtn, QDialogButtonBox.ActionRole);
         btnbox.addButton(revertbtn, QDialogButtonBox.ActionRole);
         btnbox.addButton(removebtn, QDialogButtonBox.ActionRole);
+        btnbox.addButton(resetPwdbtn, QDialogButtonBox.ActionRole);
 
         # self.infoLabel = QLabel(
         #         "<i>Choose a menu option, or right-click to invoke a context menu</i>",
@@ -98,29 +98,30 @@ class UserDlg(QDialog):
         newusrbtn.clicked.connect(self.newUser)
         revertbtn.clicked.connect(self.revertUser)
         removebtn.clicked.connect(self.removeUser)
+        resetPwdbtn.clicked.connect(self.resetPwd)
         # self.userView.clicked.connect(self.tableClick)
-        # self.connect(savebtn, SIGNAL('clicked()'), self.saveUser)
 
+    def resetPwd(self):
+        pass
         
-        # self.createDb()
-        # self.userView.show()
-
     def removeUser(self):
         index = self.userView.currentIndex()
         row = index.row()
-        print(index.isValid(), index.row())
+        # print(index.isValid(), index.row())
         nameid = self.userModel.data(self.userModel.index(row, 0))
         # self.userModel.setFilter("id = 10");
         # self.userModel.select();
         # if self.userModel.rowCount() == 1:
         #     model.removeRows(0,1) // 如果要删除所有满足条件的记录则把1改成model.rowCount()
         #     model.submitAll();
-
-        self.userModel.removeRows(row, 1)
-        self.userModel.submitAll()
-        self.userModel.database().commit()
-        print("nameid")
-        
+        # if QMessageBox.question(self, "删除确认", "是否要删除当前选中记录？", QMessageBox.Yes|QMessageBox.No) == QMessageBox.Yes:
+      
+        if QMessageBox.question(self, "删除确认", "是否要删除当前选中记录？", "确定", "取消") == 0:
+            self.userModel.removeRows(row, 1)
+            self.userModel.submitAll()
+            self.userModel.database().commit()
+            # print("nameid")
+            
 
     def revertUser(self):
         self.userModel.revertAll()
@@ -135,11 +136,11 @@ class UserDlg(QDialog):
         self.userModel.database().transaction()
         if self.userModel.submitAll():
             self.userModel.database().commit()
-            print("save success!  ->commit")
+            # print("save success!  ->commit")
         else:
             self.userModel.revertAll()
             self.userModel.database().rollback()
-            print("save fail!  ->rollback")
+            # print("save fail!  ->rollback")
         # model->database().transaction();
         # tmpitem = QStandardItem("张三")
         # self.userModel.setItem(0, 0, tmpitem)
