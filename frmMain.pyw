@@ -1,25 +1,23 @@
 #!/usr/bin/env python
-
-# from PyQt4 import QtCore, QtGui
 from myimport import *
-from resources import globaldb
-# from PyQt4.QtGui import QKeySequence, QAction, QIcon, QMainWindow, QApplication, QWidget, QSizePolicy, QLabel, QFrame, QTabWidget
-# from PyQt4.QtGui import QVBoxLayout, qApp, QActionGroup, QMessageBox, QStandardItemModel, QTableView, QTableWidgetItem, QDialogButtonBox
-# from PyQt4.QtGui import QPushButton, QStandardItem, QMenu, QItemDelegate, QStyleOptionComboBox, QComboBox, QAbstractItemView
-# from PyQt4.QtCore import SIGNAL, Qt, QVariant, QPyNullVariant
-# from PyQt4.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
+from resources import *
 
 from frmUser import UserDlg
 from frmAdapt import AdaptDlg
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, db=""):
         super(MainWindow, self).__init__()
         # print(1)
 
         self.tabWidget=QTabWidget(self)
 
-        self.db = globaldb()
+        if db == "":
+            self.db = globaldb()
+        else:
+            self.db = db
+
+        # self.db = globaldb()
         # self.createDb()
 
         # widget = UserDlg(db=self.db)
