@@ -48,7 +48,7 @@ class AdaptDlg(QDialog):
 
         self.AdaptView.setStyleSheet("QTableView::item:hover {background-color: rgba(100,200,220,100);} ")
         # self.AdaptView.setSelectionBehavior(QAbstractItemView.SelectItems)
-        self.AdaptView.setSelectionMode(QAbstractItemView.SingleSelection)
+        # self.AdaptView.setSelectionMode(QAbstractItemView.SingleSelection)
         # self.AdaptView.horizontalHeader().setStyleSheet("color: red");
         # self.AdaptView.verticalHeader().hide()
         self.AdaptView.verticalHeader().setFixedWidth(30)

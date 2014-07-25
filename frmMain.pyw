@@ -11,6 +11,7 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         # print(1)
 
+        self.setAttribute(Qt.WA_DeleteOnClose)
         self.tabWidget=QTabWidget(self)
 
         if db == "":
@@ -20,18 +21,9 @@ class MainWindow(QMainWindow):
 
         self.curuser = curuser
 
-        # self.db = globaldb()
-        # self.createDb()
-
-        # widget = UserDlg(db=self.db)
-        # widget2 = AdaptDlg(db=self.db)
-        # self.tabWidget.addTab(widget,"用户管理")
-        # self.tabWidget.addTab(widget2,"适配器管理")
         self.tabWidget.setTabsClosable(True)
         self.tabWidget.tabCloseRequested.connect(self.closeMyTab)
 
-        # self.infoLabel = widget.infoLabel
-        
         self.setCentralWidget(self.tabWidget)
 
         self.createActions()
@@ -64,7 +56,7 @@ class MainWindow(QMainWindow):
         query = QSqlQuery(self.db)
         strsqlUser = "create table User (id int not null primary key auto_increment,\
             unitsn char(20) not null, \
-            passwd char(20) not null, \
+            passwd char(40) not null, \
             unitname char(40) not null, \
             unitclass char(40) not null, \
             unitman  char(30) not null);"
@@ -85,21 +77,29 @@ class MainWindow(QMainWindow):
             # starttime DATETIME NOT NULL,
         # print("createdb")
 
-    def contextMenuEvent(self, event):
-        menu = QMenu(self)
-        menu.addAction(self.cutAct)
-        menu.addAction(self.copyAct)
-        menu.addAction(self.pasteAct)
-        menu.exec_(event.globalPos())
+    # def contextMenuEvent(self, event):
+    #     menu = QMenu(self)
+    #     menu.addAction(self.cutAct)
+    #     menu.addAction(self.copyAct)
+    #     menu.addAction(self.pasteAct)
+    #     menu.exec_(event.globalPos())
 
     # def refreshTable(self):
     #     print("a")
+    # def resetMain(self):
+    #     .textOldPwd
+    #     print(12)
 
     def modifyPwd(self):
         dialog=frmPwd(self, db=self.db, curuser=self.curuser)
         # dialog.show()
-        # self.connect(dialog, SIGNAL("changed"), self.refreshTable)
+        # dialog.accepted.connect(self.resetMain)
+        # self.connect(dialog, SIGNAL("accepted"), self.refreshTable)
         dialog.show()
+        if dialog.exec_() == QDialog.Accepted:
+            self.close()
+            # print(1)
+            # print(dialog.mmm)
 
     def userManage(self):
         if self.curuser != {}:
@@ -140,7 +140,7 @@ class MainWindow(QMainWindow):
     def about(self):
         # self.infoLabel.setText("Invoked <b>Help|About</b>")
         QMessageBox.about(self, "关于...",
-                "本程序完成康复科日常业务数据管理!")
+                "本程序完成康复科日常业务数据管理! \n\n%s \n\n%s " % (CUR_VERSION, CUR_CONTACT))
 
     def aboutQt(self):
         pass
@@ -163,21 +163,21 @@ class MainWindow(QMainWindow):
         return action
 
     def createActions(self):
-        self.userAct        = self.createAction("用户管理(&M)", self.userManage,   "", "", "用户管理")
+        self.userAct        = self.createAction("用户管理(&U)", self.userManage,   "", "", "用户管理")
         self.modifyPwdAct   = self.createAction("修改密码", self.modifyPwd,   "", "", "修改用户密码")
         self.toolAct        = self.createAction("辅具用品(&M)", self.ToolManage,   "", "", "辅具用品数量统计")
         self.exitAct        = self.createAction("退出(&X)", self.close,   "Ctrl+Q", "", "退出系统")
         self.aboutAct       = self.createAction("关于(&A)", self.about,   "", "", "显示当前系统的基本信息")
-        self.aboutQtAct     = self.createAction("关于&Qt", self.aboutQt,   "", "", "显示Qt库的基本信息")
+        self.aboutQtAct     = self.createAction("关于Qt(&Q)", self.aboutQt,   "", "", "显示Qt库的基本信息")
         self.aboutQtAct.triggered.connect(qApp.aboutQt)
         
     def createMenus(self):
-        self.fileMenu = self.menuBar().addMenu("系统管理")
+        self.fileMenu = self.menuBar().addMenu("系统管理(&S)")
         self.fileMenu.addAction(self.userAct)        
         self.fileMenu.addAction(self.modifyPwdAct)        
         self.fileMenu.addAction(self.exitAct)
 
-        self.editMenu = self.menuBar().addMenu("业务管理")
+        self.editMenu = self.menuBar().addMenu("业务管理(&F)")
         self.editMenu.addAction(self.toolAct)
         
         self.helpMenu = self.menuBar().addMenu("关于(&H)")

@@ -4,4 +4,4 @@ from PyQt4.QtGui import QPushButton, QStandardItem, QMenu, QItemDelegate, QStyle
 from PyQt4.QtGui import QDateTimeEdit, QLineEdit, QHBoxLayout, QCheckBox, QAbstractItemView, QStyleFactory, QGridLayout, QPixmap
 from PyQt4.QtCore import SIGNAL, Qt, QVariant, QPyNullVariant, QDate, QTextCodec
 from PyQt4.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
-import datetime
+import datetime, hashlib

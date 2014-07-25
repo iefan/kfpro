@@ -102,13 +102,23 @@ class UserDlg(QDialog):
         # self.userView.clicked.connect(self.tableClick)
 
     def resetPwd(self):
-        pass
+        index = self.userView.currentIndex()
+        row = index.row()
+        tmppwd = hashlib.md5()
+        tmppwd.update(b"123456")
+        self.userModel.setData(self.userModel.index(row, 2), tmppwd.hexdigest()) #set default password
+        a = self.userModel.submitAll()
+        b = self.userModel.database().commit()
+        QMessageBox.warning(self, '成功', '重置密码完成，当前密码:123456！')
+
         
     def removeUser(self):
         index = self.userView.currentIndex()
         row = index.row()
         # print(index.isValid(), index.row())
-        nameid = self.userModel.data(self.userModel.index(row, 0))
+        
+        # nameid = self.userModel.data(self.userModel.index(row, 0))
+
         # self.userModel.setFilter("id = 10");
         # self.userModel.select();
         # if self.userModel.rowCount() == 1:
@@ -130,7 +140,9 @@ class UserDlg(QDialog):
     def newUser(self):
         row = self.userModel.rowCount()
         self.userModel.insertRow(row)
-        self.userModel.setData(self.userModel.index(row, 2), "123456") #set default password
+        tmppwd = hashlib.md5()
+        tmppwd.update(b"123456")
+        self.userModel.setData(self.userModel.index(row, 2), tmppwd.hexdigest()) #set default password
 
     def saveUser(self):
         self.userModel.database().transaction()

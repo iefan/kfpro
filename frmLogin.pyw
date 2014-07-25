@@ -6,6 +6,7 @@ from frmMain import MainWindow
 class Login(QDialog):
     def __init__(self, db=""):
         QDialog.__init__(self)
+        self.setAttribute(Qt.WA_DeleteOnClose)
 
         if db == "":
             self.db = globaldb()
@@ -52,10 +53,14 @@ class Login(QDialog):
 
     def handleLogin(self):
         username = self.textName.text()
-        passwd   = self.textPass.text()
+        passwd   = self.textPass.text().encode()
+
+        tmppwd = hashlib.md5()
+        tmppwd.update(passwd)
+        # print(passwd, tmppwd.hexdigest())
 
         query = QSqlQuery(self.db)
-        strsql = "SELECT unitsn, unitname, unitclass,unitman FROM User where unitsn='%s' and passwd='%s'" % (username, passwd)
+        strsql = "SELECT unitsn, unitname, unitclass,unitman FROM User where unitsn='%s' and passwd='%s'" % (username, tmppwd.hexdigest())
         ret= query.exec_(strsql);
         # print(ret, "~~~~~~~", strsql, query.next(), query.isValid())
         # print(ret, query.isValid(), query.next(),)
@@ -83,6 +88,7 @@ def DispLogin():
         # print(3)
         window = MainWindow(db, loginwin.curuser)
         window.show()
+        db.removeDatabase("kfother")
         sys.exit(app.exec_())
 
                 
