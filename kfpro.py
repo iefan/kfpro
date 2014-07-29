@@ -1,4 +1,5 @@
 import frmLogin
 
-frmLogin.DispLogin()
+# frmLogin.DispLogin()
+frmLogin.DispSplash()
 

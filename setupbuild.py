@@ -6,7 +6,7 @@ exe=Executable(
      base="Win32Gui",
      icon="images\login.ico"
      )
-includefiles=["images\login.png", "msvcr100.dll", "MSVCP100.dll", "sqldrivers\qsqlmysql4.dll"]
+includefiles=["images\login.png", "images\splash.png", "msvcr100.dll", "MSVCP100.dll", "sqldrivers\qsqlmysql4.dll"]
 includes=[]
 excludes=[]
 packages=[]

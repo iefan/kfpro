@@ -88,9 +88,36 @@ def DispLogin():
         # print(3)
         window = MainWindow(db, loginwin.curuser)
         window.show()
-        db.removeDatabase("kfother")
+        db.close()
         sys.exit(app.exec_())
+    db.close()
 
+
+def DispSplash():
+    import sys
+    from time import time, sleep
+    app = QApplication(sys.argv)
+
+    start = time() 
+    splash = QSplashScreen(QPixmap("images/splash.png"))
+    splash.show()
+    while time() - start < 1:
+        sleep(0.001)
+        app.processEvents()
+    
+    db = globaldb()
+    loginwin = Login(db)
+    splash.finish(loginwin)
+    
+    if loginwin.exec_() == QDialog.Accepted:
+        # print(loginwin.curuser)
+        # print(3)
+        window = MainWindow(db, loginwin.curuser)
+        window.show()
+        db.close()
+        sys.exit(app.exec_())
+    db.close()
                 
 if __name__ == '__main__':
-    DispLogin()
+    # DispLogin()
+    DispSplash()

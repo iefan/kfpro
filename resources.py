@@ -14,7 +14,6 @@ def globaldb():
     db.setPassword("kfk123456")
     # db.setDatabaseName("caracate.db")
     if not db.open():
-        QSqlDatabase.removeDatabase("kfother")
         QMessageBox.warning(None, "错误",  "数据库连接失败: %s" % db.lastError().text())
         sys.exit(1)
     return db

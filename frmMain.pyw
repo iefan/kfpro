@@ -19,6 +19,11 @@ class MainWindow(QMainWindow):
         else:
             self.db = db
 
+        # self.db.close()
+
+        # print(self.db.connectionName())
+        # self.closeEvent.connect(self.closeWindow())
+        
         self.curuser = curuser
 
         self.tabWidget.setTabsClosable(True)
@@ -47,6 +52,13 @@ class MainWindow(QMainWindow):
         self.setStyleSheet("font-size:14px;")
         
         # self.createDb()
+
+    def closeEvent(self, event):
+        # pass
+        # print(1)
+        self.db.close()
+        # QSqlDatabase.removeDatabase(self.db.connectionName())
+        # print(2)
 
     def closeMyTab(self, tabindx):
         self.tabWidget.removeTab (tabindx)
@@ -189,5 +201,6 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     # app.setStyle(QStyleFactory.create('cleanlooks'))
     window = MainWindow()
+    # app.lastWindowClosed.connect(window.closeWindow())
     window.show()
     sys.exit(app.exec_())
